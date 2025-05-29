@@ -94,6 +94,8 @@ Buku *deleteBuku(Buku *root, string judul, bool &found, Buku *&deletedNode)
     {
         found = true;
         deletedNode = new Buku(*root);
+        deletedNode->left = NULL;
+        deletedNode->right = NULL;
         if (!root->left)
         {
             Buku *temp = root->right;
@@ -132,12 +134,15 @@ Buku *undo(Buku *root)
         bool dummy;
         Buku *dummyNode = NULL;
         root = deleteBuku(root, last->data->judul, dummy, dummyNode);
-        cout << "Buku \"" << last->data->judul << "\" batal ditambahkan!\n";
+        cout << "Buku berjudul \"" << last->data->judul << "\" batal ditambahkan!\n";
     }
     else if (last->aksi == "hapus")
     {
-        root = insertBuku(root, new Buku(*last->data));
-        cout << "Buku \"" << last->data->judul << "\" batal dihapus!\n";
+        Buku *bukuUndo = new Buku(*last->data);
+        bukuUndo->left = NULL;
+        bukuUndo->right = NULL;
+        root = insertBuku(root, bukuUndo);
+        cout << "Buku berjudul \"" << last->data->judul << "\" batal dihapus!\n";
     }
 
     pop();
@@ -151,10 +156,10 @@ int main()
 
     do
     {
-        cout << "\n=== Menu Buku ===\n";
+        cout << "\n===== Pilihan Menu BookTrack =====\n";
         cout << "1. Tambah Buku\n";
         cout << "2. Tampilkan Buku (A-Z)\n";
-        cout << "3. Hapus Buku\n";
+        cout << "3. Hapus Buku (berdasarkan judul)\n";
         cout << "4. Undo Aksi Terakhir\n";
         cout << "5. Keluar\n";
         cout << "Pilih : ";
@@ -165,27 +170,27 @@ int main()
 
         if (pilihan == 1)
         {
-            string j, p;
-            int t;
+            string judulBuku, pengarangBuku;
+            int tahunBuku;
             cout << "Judul      : ";
-            getline(cin, j);
+            getline(cin, judulBuku);
             cout << "Pengarang  : ";
-            getline(cin, p);
+            getline(cin, pengarangBuku);
             cout << "Tahun      : ";
-            cin >> t;
-            Buku *b = new Buku(j, p, t);
-            root = insertBuku(root, b);
-            push("tambah", b);
-            cout << "Buku berjudul \"" << b->judul << "\" berhasil ditambahkan.\n";
+            cin >> tahunBuku;
+            Buku *bukuBaru = new Buku(judulBuku, pengarangBuku, tahunBuku);
+            root = insertBuku(root, bukuBaru);
+            push("tambah", bukuBaru);
+            cout << "Selamat!!! Buku berjudul \"" << bukuBaru->judul << "\" berhasil ditambahkan.\n";
         }
         else if (pilihan == 2)
         {
-            cout << "\nDaftar buku yang Berhasil ditambahkan!\n\n";
+            cout << "\nDaftar Buku!\n\n";
             inOrder(root);
         }
         else if (pilihan == 3)
         {
-            cout << "\nDaftar Buku Saat Ini!\n";
+            cout << "\nDaftar Buku Saat Ini!\n\n";
             inOrder(root);
 
             string j;
@@ -197,7 +202,7 @@ int main()
             if (found)
             {
                 push("hapus", deleted);
-                cout << "Buku berjudul \"" << deleted->judul << "\" berhasil dihapus.\n";
+                cout << "\nBuku berjudul \"" << deleted->judul << "\" berhasil dihapus.\n";
             }
             else
             {
@@ -210,11 +215,11 @@ int main()
         }
         else if (pilihan == 5)
         {
-            cout << "Terima kasih!\n";
+            cout << "Terima kasih Telah Menggunakan Program Ini!\n";
         }
         else
         {
-            cout << "Pilihan tidak valid.\n";
+            cout << "Pilihan menu tidak valid.\n";
         }
 
     } while (pilihan != 5);
